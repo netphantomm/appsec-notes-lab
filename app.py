@@ -1,5 +1,6 @@
 from flask import Flask
 app = Flask(__name__)
+current_user_id = 1
 notes = {
     1: {
         "owner_id": 1,
@@ -13,6 +14,10 @@ notes = {
         "owner_id": 3,
         "text": "Joker: Hahahha, I don't wanna kill you! What would I do without you? YOU.. COMPLETE.. MEE",
     },
+    4: {
+        "owner_id": 1,
+        "text": "Elliot: second note",
+    }
 }
 
 @app.get("/")
@@ -29,6 +34,9 @@ def show_note(note_id):
     
     if note is None:
         return "Note not found", 404
+    elif note.get("owner_id") != current_user_id:
+        return "Forbidden: You do not have permission to access this note.", 403
+        
     else:
         return note.get("text")
 
