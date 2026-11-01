@@ -1,4 +1,5 @@
-from flask import Flask
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask import Flask, request
 app = Flask(__name__)
 current_user_id = 1
 notes = {
@@ -20,6 +21,19 @@ notes = {
     }
 }
 
+users = {
+    "elliot": {
+        "id": 1,
+        "password_hash": generate_password_hash("training-password"),
+    },
+    "alex": {
+        "id": 2,
+        "password_hash": generate_password_hash("alex-password"),
+    }
+}
+
+
+
 @app.get("/")
 def home():
     return "Appsec Notes Lab"
@@ -39,4 +53,24 @@ def show_note(note_id):
         
     else:
         return note.get("text")
+
+
+
+@app.post("/login")
+def login():
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    if not username or not password:
+        return "Username and password required", 400
+    user = users.get(username)
+    if user is None:
+        return "Invalid username or password", 401
+    
+    is_valid = check_password_hash(user["password_hash"], password)
+    if not is_valid:
+        return "Invalid username or password", 401
+    return "Credentials verified"
+
+
 
