@@ -1,7 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Flask, request
+import secrets
+from flask import Flask, request, session
 app = Flask(__name__)
-current_user_id = 1
+app.config['SECRET_KEY'] = secrets.token_hex(32)
 notes = {
     1: {
         "owner_id": 1,
@@ -44,15 +45,16 @@ def index():
 
 @app.get("/notes/<int:note_id>")
 def show_note(note_id):
+    current_user_id = session.get("user_id")
+    if current_user_id is None:
+        return "Authentication required", 401
     note = notes.get(note_id)
-    
     if note is None:
         return "Note not found", 404
-    elif note.get("owner_id") != current_user_id:
-        return "Forbidden: You do not have permission to access this note.", 403
-        
-    else:
-        return note.get("text")
+    
+    if note.get("owner_id") != current_user_id:
+        return "Forbidden", 403
+    return note.get("text")
 
 
 
@@ -70,7 +72,9 @@ def login():
     is_valid = check_password_hash(user["password_hash"], password)
     if not is_valid:
         return "Invalid username or password", 401
-    return "Credentials verified"
+    session.clear()
+    session["user_id"] = user["id"]
+    return "Login in"
 
 
 
