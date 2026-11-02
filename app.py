@@ -78,3 +78,7 @@ def login():
 
 
 
+@app.post("/logout")
+def logout():
+    session.clear()
+    return "Logged out"
