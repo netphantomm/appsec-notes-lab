@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # AppSec Notes Lab
 
 ## Purpose
@@ -41,7 +40,6 @@ These are public demo credentials for local practice.
 - Restarting the server changes the signing key and invalidates existing sessions.
 - Logout deletes the current client's session cookie; copied cookies are not revoked.
 - Explicit CSRF protection and login rate limiting are not implemented.
-=======
+
 # appsec-notes-lab
 Local Flask lab demonstrating authentication, sessions and ownership-based access control.
->>>>>>> origin/main
